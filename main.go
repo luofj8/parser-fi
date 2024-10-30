@@ -13,7 +13,7 @@ import (
 func main() {
 	// 定义命令行参数
 	chainType := flag.String("chain", "Ethereum", "链类型 (如 Ethereum, Arbitrum)")
-	contractType := flag.String("contract", "EETHABI", "合约类型 (如 EETHABI)")
+	contractType := flag.String("contract", "EETH", "合约类型 (如 EETH)")
 	userAddress := flag.String("user", "", "用户地址 (用于 balanceOf 方法)")
 	flag.Parse()
 
