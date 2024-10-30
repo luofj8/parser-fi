@@ -1,12 +1,29 @@
 package main
 
 import (
+	"flag"
+	"fmt"
+	"github.com/ethereum/go-ethereum/common"
 	"log"
+	"os"
 	"parsefi/config"
 	"parsefi/parser"
 )
 
 func main() {
+	// 定义命令行参数
+	chainType := flag.String("chain", "Ethereum", "链类型 (如 Ethereum, Arbitrum)")
+	contractType := flag.String("contract", "EETHABI", "合约类型 (如 EETHABI)")
+	userAddress := flag.String("user", "", "用户地址 (用于 balanceOf 方法)")
+	flag.Parse()
+
+	// 检查用户地址是否为空
+	if *userAddress == "" {
+		fmt.Println("请提供用户地址，例如 -user 0xUserAddress")
+		flag.Usage()
+		os.Exit(1)
+	}
+
 	// 加载配置
 	cfg, err := config.LoadConfig("./config/config.json")
 	if err != nil {
@@ -14,34 +31,37 @@ func main() {
 	}
 
 	// 初始化多链解析器
-	_, err = parser.NewMultiChainParser(cfg)
+	parser, err := parser.NewMultiChainParser(cfg)
 	if err != nil {
 		log.Fatalf("初始化解析器失败: %v", err)
 	}
 
-	// 示例调用 Ethereum 链上 ERC20 合约的 balanceOf 方法
-	//result, err := parser.CallContractMethod("Ethereum", "EETHABI", "balanceOf", []interface{}{common.HexToAddress("0x69F34aFA1F42690A802C9d638bc6f2150FFb764C")})
-	//if err != nil {
-	//	log.Fatalf("调用合约方法失败: %v", err)
-	//}
-	//log.Printf("Ethereum 链上用户余额: %v", result)
-	//
-	//result, err = parser.CallContractMethod("Ethereum", "EETH", "totalSupply", nil)
-	//if err != nil {
-	//	log.Fatalf("调用合约方法失败: %v", err)
-	//}
-	//log.Printf("Ethereum 链上总供应量: %v", result)
-	//
-	//result, err = parser.CallContractMethod("Ethereum", "EETH", "symbol", nil)
-	//if err != nil {
-	//	log.Fatalf("调用合约方法失败: %v", err)
-	//}
-	//log.Printf("Ethereum symbol: %v", result)
+	// 使用用户输入调用合约的方法
+	address := common.HexToAddress(*userAddress)
 
-	// 示例调用 Arbitrum 链上 ERC20 合约的 totalSupply 方法
-	//result, err = parser.CallContractMethod("Arbitrum", "ERC20", "totalSupply", nil)
-	//if err != nil {
-	//	log.Fatalf("调用合约方法失败: %v", err)
-	//}
-	//log.Printf("Arbitrum 链上总供应量: %v", result)
+	// 调用 balanceOf 方法
+	balance, err := parser.CallContractMethod(*chainType, *contractType, "balanceOf", []interface{}{address})
+	if err != nil {
+		fmt.Printf("balanceOf 方法调用失败: %v\n", err)
+	} else {
+		fmt.Printf("%s 链上用户 %s 的余额: %v\n", *chainType, *userAddress, balance)
+	}
+
+	// 调用 totalSupply 方法
+	totalSupply, err := parser.CallContractMethod(*chainType, *contractType, "totalSupply", nil)
+	if err != nil {
+		fmt.Printf("totalSupply 方法调用失败: %v\n", err)
+	} else {
+		fmt.Printf("%s 链上合约的总供应量: %v\n", *chainType, totalSupply)
+	}
+
+	// 调用 symbol 方法
+	symbol, err := parser.CallContractMethod(*chainType, *contractType, "symbol", nil)
+	if err != nil {
+		fmt.Printf("symbol 方法调用失败: %v\n", err)
+	} else {
+		fmt.Printf("%s 链上合约的符号: %v\n", *chainType, symbol)
+	}
+
+	select {}
 }
