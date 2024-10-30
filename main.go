@@ -21,7 +21,7 @@ func main() {
 	}
 
 	// 示例调用 Ethereum 链上 ERC20 合约的 balanceOf 方法
-	result, err := parser.CallContractMethod("Ethereum", "EETHABI", "balanceOf", []interface{}{common.HexToAddress("0xUserAddress")})
+	result, err := parser.CallContractMethod("Ethereum", "EETHABI", "balanceOf", []interface{}{common.HexToAddress("0x69F34aFA1F42690A802C9d638bc6f2150FFb764C")})
 	if err != nil {
 		log.Fatalf("调用合约方法失败: %v", err)
 	}
