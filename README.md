@@ -1,3 +1,3 @@
 //使用方法
-      
-go run main.go -chain Ethereum -contract EETH -user 0xUserAddress
+
+go run main.go Ethereum EETH 0x69F34aFA1F42690A802C9d638bc6f2150FFb764C
