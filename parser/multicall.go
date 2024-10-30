@@ -61,7 +61,6 @@ func (p *MultiChainParser) CallContractMethod(chainName, contractName, methodNam
 	if !ok {
 		return nil, fmt.Errorf("未找到链 %s 的客户端", chainName)
 	}
-
 	contractKey := fmt.Sprintf("%s:%s", chainName, contractName)
 	contractAddress, ok := p.contracts[contractKey]
 	if !ok {
@@ -75,7 +74,9 @@ func (p *MultiChainParser) CallContractMethod(chainName, contractName, methodNam
 
 	// 构建调用数据
 	callData, err := parsedABI.Pack(methodName, params...)
+
 	if err != nil {
+		log.Println("Pack：", err)
 		return nil, err
 	}
 
@@ -86,6 +87,7 @@ func (p *MultiChainParser) CallContractMethod(chainName, contractName, methodNam
 	}
 	result, err := client.CallContract(context.Background(), msg, nil)
 	if err != nil {
+		log.Println("CallContract,err：", err)
 		return nil, err
 	}
 
@@ -93,6 +95,7 @@ func (p *MultiChainParser) CallContractMethod(chainName, contractName, methodNam
 	var output interface{}
 	err = parsedABI.UnpackIntoInterface(&output, methodName, result)
 	if err != nil {
+		log.Println("UnpackIntoInterface，err：", err)
 		return nil, err
 	}
 
