@@ -21,10 +21,23 @@ func TestCallContractMethod(t *testing.T) {
 	}
 
 	// 测试调用合约方法
-	result, err := parser.CallContractMethod("Ethereum", "ERC20", "balanceOf", []interface{}{common.HexToAddress("0xUserAddress")})
+	result, err := parser.CallContractMethod("Ethereum", "EETH", "balanceOf", []interface{}{common.HexToAddress("0x69F34aFA1F42690A802C9d638bc6f2150FFb764C")})
 	if err != nil {
 		t.Errorf("调用 balanceOf 方法失败: %v", err)
 	} else {
 		t.Logf("balanceOf 返回结果: %v", result)
+	}
+	result, err = parser.CallContractMethod("Ethereum", "EETH", "totalSupply", nil)
+	if err != nil {
+		t.Errorf("调用 totalSupply 方法失败: %v", err)
+	} else {
+		t.Logf("totalSupply 返回结果: %v", result)
+	}
+
+	result, err = parser.CallContractMethod("Ethereum", "EETH", "symbol", nil)
+	if err != nil {
+		t.Errorf("调用 symbol 方法失败: %v", err)
+	} else {
+		t.Logf("symbol 返回结果: %v", result)
 	}
 }
